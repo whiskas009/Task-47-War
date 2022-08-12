@@ -78,6 +78,8 @@ namespace Task_47_War
         public Regenerate(Random random, string name) : base(random, name, "Регенерирющий") 
         {
             Health = 100;
+            Attack = 20;
+            Armor = 15;
         }
 
         public override void TakeDamage(int damage)
@@ -96,7 +98,12 @@ namespace Task_47_War
 
     class Clever : Soldier
     {
-        public Clever(Random random, string name) : base(random, name, "Ловкий") { }
+        public Clever(Random random, string name) : base(random, name, "Ловкий") 
+        {
+            Health = 70;
+            Attack = 20;
+            Armor = 0;
+        }
 
         public override void TakeDamage(int damage)
         {
@@ -124,6 +131,9 @@ namespace Task_47_War
     {
         public Mutant(Random random, string name) : base(random, name, "Мутант") 
         {
+            Health = 100;
+            Attack = 20;
+            Armor = 0;
             IncreaseCharacteristics();
         }
 
