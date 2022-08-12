@@ -16,22 +16,16 @@ namespace Task_47_War
     class Soldier
     {
         public string FlagCountry { get; protected set; }
-
         public string Type { get; protected set; }
-
         public int Health { get; protected set; }
-
         public int Attack { get; protected set; }
-
         public int Armor { get; protected set; }
 
-        public Soldier(string flagCountry, int health, int attack, int armor, string type = "Обычный")
+        public Soldier(Random random ,string flagCountry, string type = "Обычный")
         {
             FlagCountry = flagCountry;
-            Health = health;
-            Attack = attack;
-            Armor = armor;
             Type = type;
+            AssignRandomCharacteristics(random);
         }
 
         public virtual void TakeDamage(int damage)
@@ -63,11 +57,28 @@ namespace Task_47_War
         {
             Console.WriteLine($"Здоровье: {Health} | Аттака: {Attack} | Броня: {Attack} | Тип: {Type}");
         }
+
+        private void AssignRandomCharacteristics(Random random)
+        {
+            int minHealth = 80;
+            int maxHealth = 120;
+            int minAttack = 20;
+            int maxAttack = 40;
+            int minArmor = 0;
+            int maxArmor = 40;
+
+            Health = random.Next(minHealth, maxHealth);
+            Attack = random.Next(minAttack, maxAttack);
+            Armor = random.Next(minArmor, maxArmor);
+        }
     }
 
     class Regenerate: Soldier
     {
-        public Regenerate(string name) : base(name, 100, 20, 15, "Регенерирющий") { }
+        public Regenerate(Random random, string name) : base(random, name, "Регенерирющий") 
+        {
+            Health = 100;
+        }
 
         public override void TakeDamage(int damage)
         {
@@ -85,7 +96,7 @@ namespace Task_47_War
 
     class Clever : Soldier
     {
-        public Clever(string name) : base(name, 70, 20, 0, "Ловкий") { }
+        public Clever(Random random, string name) : base(random, name, "Ловкий") { }
 
         public override void TakeDamage(int damage)
         {
@@ -111,7 +122,7 @@ namespace Task_47_War
 
     class Mutant : Soldier
     {
-        public Mutant(string name) : base(name, 100, 20, 0, "Мутант") 
+        public Mutant(Random random, string name) : base(random, name, "Мутант") 
         {
             IncreaseCharacteristics();
         }
@@ -183,11 +194,11 @@ namespace Task_47_War
 
             for (int i = 0; i < numberSoldier; i++)
             {
-                ChooseRandomTypeSoldier(random, flagCountry, AssignRandomCharacteristics(random));
+                ChooseRandomTypeSoldier(random, flagCountry);
             }
         }
 
-        private void ChooseRandomTypeSoldier(Random random, string flagCountry, List<int> randomCharacteristics)
+        private void ChooseRandomTypeSoldier(Random random, string flagCountry)
         {
             int minLimit = 0;
             int maxLimit = 8;
@@ -198,37 +209,20 @@ namespace Task_47_War
 
             if (ramdomNumber == probabilityMutantSoldier)
             {
-                _soldiers.Add(new Mutant(flagCountry));
+                _soldiers.Add(new Mutant(random, flagCountry));
             }
             else if (ramdomNumber == probabilityRegenerateSoldier)
             {
-                _soldiers.Add(new Regenerate(flagCountry));
+                _soldiers.Add(new Regenerate(random, flagCountry));
             }
             else if (ramdomNumber == probabilityCleverSoldier)
             {
-                _soldiers.Add(new Clever(flagCountry));
+                _soldiers.Add(new Clever(random, flagCountry));
             }
             else
             {
-                _soldiers.Add(new Soldier(flagCountry, randomCharacteristics[0], randomCharacteristics[1], randomCharacteristics[2]));
+                _soldiers.Add(new Soldier(random, flagCountry));
             }
-        }
-
-        private List<int> AssignRandomCharacteristics(Random random)
-        {
-            List<int> characteristics = new List<int>();
-            int minHealth = 80;
-            int maxHealth = 120;
-            int minAttack = 20;
-            int maxAttack = 40;
-            int minArmor = 0;
-            int maxArmor = 40;
-
-            characteristics.Add(random.Next(minHealth,maxHealth));
-            characteristics.Add(random.Next(minAttack, maxAttack));
-            characteristics.Add(random.Next(minArmor, maxArmor));
-
-            return characteristics;
         }
     }
 
