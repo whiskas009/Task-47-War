@@ -134,9 +134,9 @@ namespace Task_47_War
 
     class Platoon
     {
-        public string FlagCountry { get; private set; }
-        
         private List<Soldier> _soldiers = new List<Soldier>();
+
+        public string FlagCountry { get; private set; }
 
         public Platoon(Random random, string flagCountry)
         {
@@ -183,11 +183,11 @@ namespace Task_47_War
 
             for (int i = 0; i < numberSoldier; i++)
             {
-                RandomChooseTypeSoldier(random, flagCountry, RandomAssignCharacteristics(random));
+                ChooseRandomTypeSoldier(random, flagCountry, RandomAssignCharacteristics(random));
             }
         }
 
-        private void RandomChooseTypeSoldier(Random random, string flagCountry, List<int> randomCharacteristics)
+        private void ChooseRandomTypeSoldier(Random random, string flagCountry, List<int> randomCharacteristics)
         {
             int minLimit = 0;
             int maxLimit = 8;
