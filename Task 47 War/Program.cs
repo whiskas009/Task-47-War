@@ -165,6 +165,15 @@ namespace Task_47_War
             RecruitSoldiers(random, flagCountry);
         }
 
+        public Soldier RetuernRandomSoldier(Random random)
+        {
+            Soldier soldier;
+            int minLimit = 0;
+            int index = random.Next(minLimit, _soldiers.Count);
+            soldier = _soldiers.ElementAt(index);
+            return soldier;
+        }
+
         public void ShowInfoSoldiers()
         {
             for (int i = 0; i < _soldiers.Count; i++)
@@ -178,24 +187,10 @@ namespace Task_47_War
             return _soldiers.Count();
         }
 
-        public void DeleteSoldier(int index)
+        public void DeleteSoldier(Soldier soldier)
         {
+            int index = _soldiers.IndexOf(soldier);
             _soldiers.RemoveAt(index);
-        }
-
-        public int GetHeathSoldier(int index)
-        {
-            return _soldiers[index].Health;
-        }
-
-        public void TakeDamageSoldier(int index, int damage)
-        {
-            _soldiers[index].TakeDamage(damage);
-        }
-
-        public int ReturnDamageSoldier(int index)
-        {
-            return _soldiers[index].ReturnDamage();
         }
 
         private void RecruitSoldiers(Random random, string flagCountry)
@@ -238,9 +233,8 @@ namespace Task_47_War
 
     class Battlefield
     {
-        private int _firstPlatoon = 0;
-        private int _secondPlatoon = 1;
-        private List<Platoon> _platoons = new List<Platoon>();
+        private Platoon _firstPlatoon;
+        private Platoon _secondPlatoon;
         private Random _random = new Random();
 
         public Battlefield()
@@ -279,34 +273,33 @@ namespace Task_47_War
 
         public void StartBattle()
         {
-            while (_platoons[_firstPlatoon].GetNumberSoldiers() > 0 && _platoons[_secondPlatoon].GetNumberSoldiers() > 0)
+            while (_firstPlatoon.GetNumberSoldiers() > 0 && _secondPlatoon.GetNumberSoldiers() > 0)
             {
                 MakeFightTwoSoldiers();
             }
 
-            if (_platoons[_firstPlatoon].GetNumberSoldiers() > _platoons[_secondPlatoon].GetNumberSoldiers())
+            if (_firstPlatoon.GetNumberSoldiers() > _secondPlatoon.GetNumberSoldiers())
             {
-                Console.WriteLine($"\nПобедил взвод страны {_platoons[_firstPlatoon].FlagCountry}\n");
+                Console.WriteLine($"\nПобедил взвод страны {_firstPlatoon.FlagCountry}\n");
             }
             else
             {
-                Console.WriteLine($"\nПобедил взвод страны {_platoons[_secondPlatoon].FlagCountry}\n");
+                Console.WriteLine($"\nПобедил взвод страны {_secondPlatoon.FlagCountry}\n");
             }
         }
 
         private void MakeFightTwoSoldiers()
         {
-            int minLimit = 0;
-            int firstSoldier = _random.Next(minLimit, _platoons[_firstPlatoon].GetNumberSoldiers());
-            int secondSoldier = _random.Next(minLimit, _platoons[_secondPlatoon].GetNumberSoldiers());
+            Soldier firstSoldier = _firstPlatoon.RetuernRandomSoldier(_random);
+            Soldier secondSoldier = _secondPlatoon.RetuernRandomSoldier(_random);
 
-            while (_platoons[_firstPlatoon].GetHeathSoldier(firstSoldier) > 0 && _platoons[_secondPlatoon].GetHeathSoldier(secondSoldier) > 0)
+            while (firstSoldier.Health > 0 && secondSoldier.Health > 0)
             {
-                _platoons[_firstPlatoon].TakeDamageSoldier(firstSoldier, _platoons[_secondPlatoon].ReturnDamageSoldier(secondSoldier));
-                _platoons[_secondPlatoon].TakeDamageSoldier(secondSoldier, _platoons[_firstPlatoon].ReturnDamageSoldier(firstSoldier));
+                firstSoldier.TakeDamage(secondSoldier.ReturnDamage());
+                secondSoldier.TakeDamage(firstSoldier.ReturnDamage());
             }
 
-            AnnounceWinner(_firstPlatoon, _secondPlatoon, firstSoldier, secondSoldier);
+            AnnounceWinner(firstSoldier, secondSoldier);
         }
 
         private void CreatePlatoons()
@@ -314,8 +307,8 @@ namespace Task_47_War
             string nameFirstCountry = "Красная";
             string nameSecondCountry = "Синяя";
 
-            _platoons.Add(new Platoon(_random, nameFirstCountry));
-            _platoons.Add(new Platoon(_random, nameSecondCountry));
+            _firstPlatoon = new Platoon(_random, nameFirstCountry);
+            _secondPlatoon = new Platoon(_random, nameSecondCountry);
 
             Console.WriteLine("\nВзводы созданы\n");
         }
@@ -323,23 +316,23 @@ namespace Task_47_War
         private void OutputPlatoonsInformation()
         {
             CreatePlatoons();
-            Console.WriteLine($"Взвод 1. Страна: {_platoons[_firstPlatoon].FlagCountry}");
-            _platoons[_firstPlatoon].ShowInfoSoldiers();
-            Console.WriteLine($"Взвод 2. Страна: {_platoons[_secondPlatoon].FlagCountry}");
-            _platoons[_secondPlatoon].ShowInfoSoldiers();
+            Console.WriteLine($"Взвод 1. Страна: {_firstPlatoon.FlagCountry}");
+            _firstPlatoon.ShowInfoSoldiers();
+            Console.WriteLine($"Взвод 2. Страна: {_secondPlatoon.FlagCountry}");
+            _secondPlatoon.ShowInfoSoldiers();
         }
 
-        private void AnnounceWinner(int firstPlatoon, int secondPlatoon, int firstSoldier, int secondSoldier)
+        private void AnnounceWinner(Soldier firstSoldier, Soldier secondSoldier)
         {
-            if (_platoons[firstPlatoon].GetHeathSoldier(firstSoldier) > _platoons[secondPlatoon].GetHeathSoldier(secondSoldier))
+            if (firstSoldier.Health > secondSoldier.Health)
             {
-                _platoons[secondPlatoon].DeleteSoldier(secondSoldier);
-                Console.WriteLine($"Солдат из страны {_platoons[firstPlatoon].FlagCountry} победил солдата из страны {_platoons[secondPlatoon].FlagCountry}");
+                _secondPlatoon.DeleteSoldier(secondSoldier);
+                Console.WriteLine($"Солдат из страны {_firstPlatoon.FlagCountry} победил солдата из страны {_secondPlatoon.FlagCountry}");
             }
             else
             {
-                _platoons[firstPlatoon].DeleteSoldier(firstSoldier);
-                Console.WriteLine($"Солдат из страны {_platoons[secondPlatoon].FlagCountry} победил солдата из страны {_platoons[firstPlatoon].FlagCountry}");
+                _firstPlatoon.DeleteSoldier(firstSoldier);
+                Console.WriteLine($"Солдат из страны {_secondPlatoon.FlagCountry} победил солдата из страны {_firstPlatoon.FlagCountry}");
             }
         }
     }
