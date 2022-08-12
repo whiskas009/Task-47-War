@@ -71,11 +71,11 @@ namespace Task_47_War
 
         public override void TakeDamage(int damage)
         {
-            PartiallyRestoreHealth(damage);
+            RestorePartiallyHealth(damage);
             base.TakeDamage(damage);
         }
 
-        private void PartiallyRestoreHealth(int damage)
+        private void RestorePartiallyHealth(int damage)
         {
             int recoveryFactor = 4;
             int restoredHealth = damage / recoveryFactor;
@@ -183,7 +183,7 @@ namespace Task_47_War
 
             for (int i = 0; i < numberSoldier; i++)
             {
-                ChooseRandomTypeSoldier(random, flagCountry, RandomAssignCharacteristics(random));
+                ChooseRandomTypeSoldier(random, flagCountry, AssignRandomCharacteristics(random));
             }
         }
 
@@ -214,7 +214,7 @@ namespace Task_47_War
             }
         }
 
-        private List<int> RandomAssignCharacteristics(Random random)
+        private List<int> AssignRandomCharacteristics(Random random)
         {
             List<int> characteristics = new List<int>();
             int minHealth = 80;
@@ -235,11 +235,8 @@ namespace Task_47_War
     class Battlefield
     {
         private int _firstPlatoon = 0;
-
         private int _secondPlatoon = 1;
-
         private List<Platoon> _platoons = new List<Platoon>();
-
         private Random _random = new Random();
 
         public Battlefield()
